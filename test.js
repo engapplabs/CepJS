@@ -1,36 +1,34 @@
-function meu_callback(conteudo) {
-        if (!("erro" in conteudo))
-            console.log(conteudo);
-        else
-            alert("CEP não encontrado.");
-    }
-
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
-function httpGet(theUrl) {
-    var xmlHttp = new XMLHttpRequest();
-    xmlHttp.open( "GET", theUrl, false ); // false for synchronous request
-    xmlHttp.send( null );
-    return xmlHttp.responseText;
-}
-
-var url = "https://viacep.com.br/ws/57055800/json"
-
-var response = httpGet(url);
-//console.log(response);
-
 var AddressHandler = function () {
-	this.getAddress = function(cep) {
-		return httpGet(this.getPropperURL(cep));
+
+	this.address =  { 
+		cep: String,
+		logradouro: String,
+		complemento: String,
+		bairro: String,
+		localidade: String,
+		uf: String,
+		unidade: String,
+		ibge: String,
+		gia: String 
 	};
 
-	this.getPropperURL = function(cep) {
+	this.getAddress = function(cep) {
+		var apiEcho =  doGet(getPropperURL(cep));
+		this.address = JSON.parse(apiEcho);
+		return this.address;
+	};
+
+	var doGet = function(url) {
+		var xmlHttp = new XMLHttpRequest();
+		xmlHttp.open("GET", url, false);
+		xmlHttp.send(null);
+		return xmlHttp.responseText;
+	};
+
+	var getPropperURL = function(cep) {
 		return "https://viacep.com.br/ws/" + cep + "/json";
 	};
+
 };
-
-var x = new AddressHandler();
-
-
-
-console.log(x.getAddress("57055-800"))
